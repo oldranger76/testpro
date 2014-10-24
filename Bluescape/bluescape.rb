@@ -66,7 +66,7 @@ ws_name = "Workspace " + Time.now.to_s[0..18]
 ws_name_field.send_keys ws_name
 puts "Workspace name is: #{ws_name}"
 ws_description = browser.find_element(:xpath => '//*[@id="editable_session_description"]')
-ws_description.send_keys "New test workspace. Created" + Time.now.to_s[0..18]
+ws_description.send_keys "New test workspace. Created @ " + Time.now.to_s[0..18]
 create_button = browser.find_element(:xpath => '//*[@id="new_editable_session"]/div[3]/input')
 create_button.click
 puts "Workspace successfully created!"
@@ -75,7 +75,7 @@ puts "Workspace successfully created!"
 open_ws = browser.find_element(:class, "tooltip-app").click
 puts "Opening workspace: #{ws_name}"
 is_displayed = browser.find_element(:xpath, "/html/body/div[9]/div/a[2]").displayed?
-puts is_displayed
+puts "Is 'Close tour' button displayed: #{is_displayed}"
 location = browser.find_element(:xpath, "/html/body/div[9]/div/a[2]").location.to_a
 puts location
 close_tour = browser.find_element(:xpath, "/html/body/div[9]/div/a[2]").click
@@ -91,17 +91,23 @@ puts "Creating new notecard"
 text_field = browser.find_element(:xpath, '//*[@id="note-creator"]/section/form/div[1]/textarea').send_key "New Note Card"
 
 is_display = browser.find_element(:xpath, "//*[@id='note-creator']/section/form/div[2]/div[3]/button").displayed?
-puts is_display
+
 browser.find_element(:xpath, "//*[@id='note-creator']/section/form/div[2]/div[3]/button").click
 new_notecard.click
 puts "New notecard created!"
 
 # Verify Note card exist
+is_notecard = browser.find_element(:class, "text-container").displayed?
+puts "Is notecard displayed: #{is_notecard}"
 
+
+require 'auto_click'
+cursor = mouse_move(300,300).right_click
 
 # This code will send email via Microsoft Outlook to the address provided above.
 # Please, comment out this section, if you don't have MS Outlook installed on your machine
 
+=begin
 require 'win32ole'
 outlook = WIN32OLE.new('Outlook.Application')
 message = outlook.CreateItem(0)
@@ -111,7 +117,9 @@ message.To = email
 #message.Recipients.Add 'utest4u@gmail.com'                           # Additional recipient
 message.Send
 
+=end
+
 # Closing browser
-# browser.quit
+#browser.quit
 
 
