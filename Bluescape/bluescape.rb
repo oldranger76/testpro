@@ -6,10 +6,11 @@ elsif RUBY_PLATFORM =~ /darwin13/; os = "OS X 10.9 Mavericks"
 elsif RUBY_PLATFORM =~ /darwin14/; os = "OS X 10.10 Yosemite"
 end
 
+
 puts "Please, enter your email address to login to bluescape: "
-email = gets.chomp
+email = gets.chomp                            # Get user email and assign it to variable
 puts "Please, enter your password: "
-password = gets.chomp
+password = gets.chomp                         # Get user password and assign to variable
 
 print "##################################################\n"
 print "### User \t\t\t\t: #{ENV['USER']} \n"
@@ -31,56 +32,56 @@ browser = Selenium::WebDriver.for :chrome
 browser.manage.timeouts.implicit_wait = 10
 url = "https://portal.bluescape.com/users/sign_in"
 
-browser.navigate.to url
+
+browser.navigate.to url                       # Open Sign-in page
 puts "Navigating to #{url}"
-browser.manage.window.maximize
+browser.manage.window.maximize                # Maximize browser window
 puts "Maximize window. Window resolution: #{browser.manage.window.size.to_a}"
 puts "New page title is: #{browser.title}"
 
 email_field = browser.find_element(:xpath => '//*[@id="user_email"]')
-user_email = email
-email_field.send_keys user_email
+email_field.send_keys email
 puts "Entering email address: #{email}"
 
 password_field = browser.find_element(:xpath => '//*[@id="user_password"]')
-user_pass = password
-password_field.send_keys user_pass
+password_field.send_keys password
 puts "Entering password"
 
-signin_button = browser.find_element(:xpath => '//*[@id="new_user"]/div[2]/input').click
+browser.find_element(:xpath => '//*[@id="new_user"]/div[2]/input').click
 puts "Signing in"
 sleep(1)
 puts "New page title is: #{browser.title}"
 
 # TC 01.02 "Create workspace and open it"
-
 # 1.Click on your organization name
-organization = browser.find_element(:xpath => "/html/body/div[2]/div/div/div[1]/ul/li/a").click
+browser.find_element(:xpath => "/html/body/div[2]/div/div/div[1]/ul/li/a").click
 
 # 2.Create new workspace
-new_workspace = browser.find_element(:xpath => "//*[@id='session-list']/div[1]/div[2]/a").click
+browser.find_element(:xpath => "//*[@id='session-list']/div[1]/div[2]/a").click
 puts "Creating new workspace"
+
 browser.switch_to.active_element
+
 ws_name_field = browser.find_element(:xpath => "//*[@id='editable_session_name']")
 ws_name = "Workspace " + Time.now.to_s[0..18]
 ws_name_field.send_keys ws_name
 puts "Workspace name is: #{ws_name}"
+
 ws_description = browser.find_element(:xpath => '//*[@id="editable_session_description"]')
 ws_description.send_keys "New test workspace. Created @ " + Time.now.to_s[0..18]
-create_button = browser.find_element(:xpath => '//*[@id="new_editable_session"]/div[3]/input')
-create_button.click
+
+ws_create_button = browser.find_element(:xpath => '//*[@id="new_editable_session"]/div[3]/input')
+ws_create_button.click
 puts "Workspace successfully created!"
 
 # 3.Open your workspace
-open_ws = browser.find_element(:class, "tooltip-app").click
+browser.find_element(:class, "tooltip-app").click
 puts "Opening workspace: #{ws_name}"
-is_displayed = browser.find_element(:xpath, "/html/body/div[9]/div/a[2]").displayed?
-puts "Is 'Close tour' button displayed: #{is_displayed}"
-location = browser.find_element(:xpath, "/html/body/div[9]/div/a[2]").location.to_a
-puts location
-close_tour = browser.find_element(:xpath, "/html/body/div[9]/div/a[2]").click
 
-#wait.until {browser.find_element(:xpath, "/html/body/div[9]/div/a[2]").displayed?} # Problem here! in `assert_ok': unknown error: Element is not clickable at point (960, 551
+
+sleep(5)                        # There is a bug on chrome-driver which sometime cannot click element, I used 5 second delay to avoid it
+browser.find_element(:xpath, "/html/body/div[9]/div/a[2]").click    # Close tour
+
 puts "Workspace opened!"
 puts "New page title is: #{browser.title}"
 
@@ -88,21 +89,23 @@ puts "New page title is: #{browser.title}"
 new_notecard = browser.find_element(:xpath, "//*[@id='note-creator-button']/i")
 new_notecard.click
 puts "Creating new notecard"
-text_field = browser.find_element(:xpath, '//*[@id="note-creator"]/section/form/div[1]/textarea').send_key "New Note Card"
+browser.find_element(:xpath, '//*[@id="note-creator"]/section/form/div[1]/textarea').send_key "New Note Card"
 
-is_display = browser.find_element(:xpath, "//*[@id='note-creator']/section/form/div[2]/div[3]/button").displayed?
+browser.find_element(:xpath, "//*[@id='note-creator']/section/form/div[2]/div[3]/button").displayed?
 
+sleep(5)                        # Same problem as above with "Close tour" button
 browser.find_element(:xpath, "//*[@id='note-creator']/section/form/div[2]/div[3]/button").click
+
 new_notecard.click
 puts "New notecard created!"
 
 # Verify Note card exist
 is_notecard = browser.find_element(:class, "text-container").displayed?
 puts "Is notecard displayed: #{is_notecard}"
-
-
-require 'auto_click'
-cursor = mouse_move(300,300).right_click
+click_on_note = browser.find_element(:class, "text-container").click  # Click on notecard to display controls
+sleep(2)
+browser.find_element(:class, "window-delete-button").click
+puts "Notecard deleted!"
 
 # This code will send email via Microsoft Outlook to the address provided above.
 # Please, comment out this section, if you don't have MS Outlook installed on your machine
@@ -119,7 +122,7 @@ message.Send
 
 =end
 
+
 # Closing browser
-#browser.quit
-
-
+puts "Closing browser, Test case pass!"
+browser.quit

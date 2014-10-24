@@ -3,3 +3,4 @@ source "https://rubygems.org"
 
 gem 'selenium-webdriver'
 gem 'auto_click'
+gem 'watir-webdriver', '~> 0.6.11'
