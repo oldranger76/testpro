@@ -21,6 +21,8 @@ print "### Operating System \t: #{os} \n"
 print "### Ruby version \t\t: #{RUBY_VERSION} \n"
 
 require 'selenium-webdriver'
+require 'test/unit'
+actions = Selenium::WebDriver::ActionBuilder
 
 # TC 01.01 "Sign in":
 # Open browser
@@ -54,9 +56,11 @@ puts "New page title is: #{browser.title}"
 
 # TC 01.02 "Create workspace and open it"
 # 1.Click on your organization name
-browser.find_element(:xpath => "/html/body/div[2]/div/div/div[1]/ul/li/a").click
+
+browser.find_element(:class, "organization-listing").click
 
 # 2.Create new workspace
+
 browser.find_element(:xpath => "//*[@id='session-list']/div[1]/div[2]/a").click
 puts "Creating new workspace"
 
@@ -74,18 +78,22 @@ ws_create_button = browser.find_element(:xpath => '//*[@id="new_editable_session
 ws_create_button.click
 puts "Workspace successfully created!"
 
+
 # 3.Open your workspace
 browser.find_element(:class, "tooltip-app").click
-puts "Opening workspace: #{ws_name}"
+puts "Opening workspace: "
 
 
 sleep(5)                        # There is a bug on chrome-driver which sometime cannot click element, I used 5 second delay to avoid it
 browser.find_element(:xpath, "/html/body/div[9]/div/a[2]").click    # Close tour
 
+
+
 puts "Workspace opened!"
 puts "New page title is: #{browser.title}"
 
 # TC 01.03 Create new Note card
+
 new_notecard = browser.find_element(:xpath, "//*[@id='note-creator-button']/i")
 new_notecard.click
 puts "Creating new notecard"
@@ -102,10 +110,10 @@ puts "New notecard created!"
 # Verify Note card exist
 is_notecard = browser.find_element(:class, "text-container").displayed?
 puts "Is notecard displayed: #{is_notecard}"
-click_on_note = browser.find_element(:class, "text-container").click  # Click on notecard to display controls
-sleep(2)
-browser.find_element(:class, "window-delete-button").click
-puts "Notecard deleted!"
+
+
+
+
 
 # This code will send email via Microsoft Outlook to the address provided above.
 # Please, comment out this section, if you don't have MS Outlook installed on your machine
